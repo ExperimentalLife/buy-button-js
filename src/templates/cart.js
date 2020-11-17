@@ -34,6 +34,7 @@ const cartTemplates = {
               {{/data.contents.note}}
               <p class="{{data.classes.cart.notice}}" data-element="cart.notice">{{data.text.notice}}</p>
               <button class="{{data.classes.cart.button}}" type="button" data-element="cart.button">{{data.text.button}}</button>
+              <span class="{{data.classes.cart.hiddenSummary}}" aria-live="polite"></span>
             </div>
            {{/data.isEmpty}}`,
 };

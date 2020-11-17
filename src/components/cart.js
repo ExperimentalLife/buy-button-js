@@ -408,8 +408,16 @@ export default class Cart extends Component {
       this.toggles.forEach((toggle) => toggle.view.render());
       if (quantity > 0) {
         this.view.render();
+        const updatedLineItem = this.model.lineItems.find((item) => item.id === id);
+        const lineItemSubtotal = updatedLineItem.variant.priceV2.amount * quantity;
+        this.updateSummaryText(`${this.options.text.itemSubtotalAccessibilityLabel} ${formatMoney(lineItemSubtotal)}`);
       } else {
         this.view.animateRemoveNode(id);
+        if (this.model.lineItems.length > 0) {
+          this.updateSummaryText(this.options.text.itemRemovedAccessibilityLabel);
+        } else {
+          this.updateSummaryText(`${this.options.text.itemRemovedAccessibilityLabel} ${this.options.text.empty}`, true);
+        }
       }
       return checkout;
     });
@@ -437,6 +445,7 @@ export default class Cart extends Component {
         if (!openCart) {
           this.setFocus();
         }
+        this.updateSummaryText(this.options.text.itemAddedAccessibilityLabel);
         return checkout;
       });
     } else {
@@ -454,6 +463,7 @@ export default class Cart extends Component {
         if (!openCart) {
           this.setFocus();
         }
+        this.updateSummaryText(this.options.text.itemAddedAccessibilityLabel);
         return checkout;
       });
     }
@@ -494,5 +504,16 @@ export default class Cart extends Component {
     setTimeout(() => {
       this.view.setFocus();
     }, 0);
+  }
+
+  updateSummaryText(lineItemText, hideSubtotal) {
+    const summaryText = hideSubtotal ? lineItemText : `${lineItemText} ${this.options.text.subtotalAccessibilityLabel} ${this.formattedTotal}`;
+
+    const summaryNode = this.view.document.querySelector(this.selectors.cart.hiddenSummary);
+    summaryNode.textContent = summaryText;
+
+    setTimeout(() => {
+      summaryNode.textContent = '';
+    }, 1000);
   }
 }
